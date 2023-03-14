@@ -129,5 +129,5 @@ def test(model, test_loader):
 
 
 test_data = ImageRestorationDataset('train_data/degraded', 'train_data/original', transform=transform)
-dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+dataloader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 test(model, dataloader)
