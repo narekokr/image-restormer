@@ -72,7 +72,7 @@ optimizer = optim.Adam(model.parameters(), lr=0.001)
 # Create a dataset object
 train_dataset = ImageRestorationDataset('train_data/degraded', 'train_data/original', transform=transform)
 # Create a dataloader object
-dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+dataloader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 
 
 def psnr_loss(original, restored, max_val=1.0):
