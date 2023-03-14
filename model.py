@@ -88,7 +88,7 @@ model.to(device)
 print('Started training')
 start = time.time()
 # Train the model for some number of epochs
-for epoch in range(100):
+for epoch in range(10):
     running_loss = 0.0
     for i, data in enumerate(dataloader):
         # get the inputs
