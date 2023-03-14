@@ -9,6 +9,7 @@ from torchvision import transforms
 from PIL import Image
 import torch.nn.functional as F
 
+
 # Define the image restoration model
 class ImageRestorationModel(nn.Module):
     def __init__(self):
@@ -28,6 +29,7 @@ class ImageRestorationModel(nn.Module):
         out = self.relu2(out)
         out = self.conv3(out)
         return out
+
 
 class ImageRestorationDataset(Dataset):
     def __init__(self, degraded_dir, gt_dir, transform=None):
@@ -54,11 +56,11 @@ class ImageRestorationDataset(Dataset):
 
         return degraded_img, gt_img
 
+
 transform = transforms.Compose([
     transforms.Resize((256, 256)),
     transforms.ToTensor()
 ])
-
 
 # Create the model object
 model = ImageRestorationModel()
@@ -72,17 +74,23 @@ train_dataset = ImageRestorationDataset('train_data/degraded', 'train_data/origi
 # Create a dataloader object
 dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 
+
 def psnr_loss(original, restored, max_val=1.0):
     mse = F.mse_loss(original, restored)
     psnr = 20 * torch.log10(max_val / torch.sqrt(mse))
     return -psnr  # Return negative PSNR loss since we want to minimize it
 
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model.to(device)
+print('Started training')
 # Train the model for some number of epochs
 for epoch in range(100):
     running_loss = 0.0
     for i, data in enumerate(dataloader):
         # get the inputs
         inputs, original = data
+        inputs, original = inputs.to(device), original.to(device)
 
         # zero the parameter gradients
         optimizer.zero_grad()
@@ -95,11 +103,13 @@ for epoch in range(100):
 
         # print statistics
         running_loss += loss.item()
-        if i % 100 == 99:    # print every 100 mini-batches
+        # if i % 100 == 99:  # print every 100 mini-batches
+        if i > -1:  # print every 100 mini-batches
             print('[%d, %5d] loss: %.3f' % (epoch + 1, i + 1, running_loss / 100))
             running_loss = 0.0
 
 print('Finished Training')
+
 
 def test(model, test_loader):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -113,9 +123,10 @@ def test(model, test_loader):
             plt.imshow(outputs[0].permute(1, 2, 0))
             plt.show()
             mse = nn.MSELoss()(outputs, labels)
-            psnr = 10 * torch.log10(1/mse)
+            psnr = 10 * torch.log10(1 / mse)
             psnr_total += psnr.item()
-        print('Average PSNR: %.2f dB' % (psnr_total/len(test_loader)))
+        print('Average PSNR: %.2f dB' % (psnr_total / len(test_loader)))
+
 
 test_data = ImageRestorationDataset('train_data/degraded', 'train_data/original', transform=transform)
 dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True)
