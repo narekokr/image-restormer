@@ -90,8 +90,8 @@ for epoch in range(10):
         if i > -1:  # print every 100 mini-batches
             taken = datetime.timedelta(seconds=(time.time() - start))
             formatted_time = str(taken).split('.')[0]
-            print('[%d, %5d] loss: %.3f, time taken:' % (epoch + 1, i + 1, running_loss / 100), formatted_time)
-            running_loss = 0.0
+            print('[%d, %5d] loss: %.3f, time taken:' % (epoch + 1, i + 1, loss.item()), formatted_time)
+            # running_loss = 0.0
 
 print('Finished Training')
 
