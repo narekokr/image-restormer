@@ -1,4 +1,6 @@
+import datetime
 import os
+import time
 
 import matplotlib.pyplot as plt
 import torch
@@ -84,6 +86,7 @@ def psnr_loss(original, restored, max_val=1.0):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model.to(device)
 print('Started training')
+start = time.time()
 # Train the model for some number of epochs
 for epoch in range(100):
     running_loss = 0.0
@@ -105,11 +108,14 @@ for epoch in range(100):
         running_loss += loss.item()
         # if i % 100 == 99:  # print every 100 mini-batches
         if i > -1:  # print every 100 mini-batches
-            print('[%d, %5d] loss: %.3f' % (epoch + 1, i + 1, running_loss / 100))
+            taken = datetime.timedelta(milliseconds=(time.time() - start))
+            formatted_time = str(time).split('.')[0]
+            print('[%d, %5d] loss: %.3f, time taken:' % (epoch + 1, i + 1, running_loss / 100), formatted_time)
             running_loss = 0.0
 
 print('Finished Training')
 
+torch.save(model.state_dict(), 'pretrained_models/latest.pt')
 
 def test(model, test_loader):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
