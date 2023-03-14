@@ -109,7 +109,7 @@ for epoch in range(10):
         # if i % 100 == 99:  # print every 100 mini-batches
         if i > -1:  # print every 100 mini-batches
             taken = datetime.timedelta(milliseconds=(time.time() - start))
-            formatted_time = str(time).split('.')[0]
+            formatted_time = str(taken).split('.')[0]
             print('[%d, %5d] loss: %.3f, time taken:' % (epoch + 1, i + 1, running_loss / 100), formatted_time)
             running_loss = 0.0
 
