@@ -10,27 +10,7 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 from PIL import Image
 import torch.nn.functional as F
-
-
-# Define the image restoration model
-class ImageRestorationModel(nn.Module):
-    def __init__(self):
-        super(ImageRestorationModel, self).__init__()
-        # define the layers of the model
-        self.conv1 = nn.Conv2d(in_channels=3, out_channels=64, kernel_size=3, padding=1)
-        self.relu1 = nn.ReLU()
-        self.conv2 = nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, padding=1)
-        self.relu2 = nn.ReLU()
-        self.conv3 = nn.Conv2d(in_channels=64, out_channels=3, kernel_size=3, padding=1)
-
-    def forward(self, x):
-        # define the forward pass through the model
-        out = self.conv1(x)
-        out = self.relu1(out)
-        out = self.conv2(out)
-        out = self.relu2(out)
-        out = self.conv3(out)
-        return out
+from models.ImageRestorationModel import ImageRestorationModel
 
 
 class ImageRestorationDataset(Dataset):
@@ -100,7 +80,7 @@ for epoch in range(10):
 
         # forward + backward + optimize
         outputs = model(inputs)
-        loss = psnr_loss(original, outputs)
+        loss = criterion(original, outputs)
         loss.backward()
         optimizer.step()
 
@@ -128,7 +108,7 @@ def test(model, test_loader):
             outputs = model(inputs)
             plt.imshow(outputs[0].permute(1, 2, 0))
             plt.show()
-            mse = nn.MSELoss()(outputs, labels)
+            mse = criterion(outputs, labels)
             psnr = 10 * torch.log10(1 / mse)
             psnr_total += psnr.item()
         print('Average PSNR: %.2f dB' % (psnr_total / len(test_loader)))
