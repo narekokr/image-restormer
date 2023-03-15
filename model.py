@@ -1,3 +1,4 @@
+import argparse
 import datetime
 import os
 import time
@@ -12,6 +13,11 @@ from PIL import Image
 import torch.nn.functional as F
 from models.ImageRestorationModel import ImageRestorationModel
 
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--batch_size', type=int, required=True)
+args = parser.parse_args()
+batch_size = args.batch_size
 
 class ImageRestorationDataset(Dataset):
     def __init__(self, degraded_dir, gt_dir, transform=None):
@@ -54,7 +60,7 @@ optimizer = optim.Adam(model.parameters(), lr=0.001)
 # Create a dataset object
 train_dataset = ImageRestorationDataset('train_data/degraded', 'train_data/original', transform=transform)
 # Create a dataloader object
-dataloader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
 
 def psnr_loss(original, restored, max_val=1.0):
