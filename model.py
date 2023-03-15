@@ -70,6 +70,7 @@ def psnr_loss(original, restored, max_val=1.0):
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = nn.DataParallel(model)
 model.to(device)
 print('Started training')
 start = time.time()
