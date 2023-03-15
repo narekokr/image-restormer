@@ -16,8 +16,10 @@ from models.ImageRestorationModel import ImageRestorationModel
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--batch_size', type=int, required=True)
+parser.add_argument('--epochs', type=int, default=10)
 args = parser.parse_args()
 batch_size = args.batch_size
+epochs = args.epochs
 
 class ImageRestorationDataset(Dataset):
     def __init__(self, degraded_dir, gt_dir, transform=None):
@@ -75,7 +77,7 @@ model.to(device)
 print('Started training')
 start = time.time()
 # Train the model for some number of epochs
-for epoch in range(10):
+for epoch in range(epochs):
     running_loss = 0.0
     for i, data in enumerate(dataloader):
         # get the inputs
