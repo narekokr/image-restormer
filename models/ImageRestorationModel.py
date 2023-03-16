@@ -15,6 +15,7 @@ class ImageRestorationModel(nn.Module):
         self.bn3 = nn.BatchNorm2d(64)
         self.relu3 = nn.ReLU()
         self.conv4 = nn.Conv2d(in_channels=64, out_channels=3, kernel_size=3, padding=1)
+        self.relu4 = nn.ReLU()
 
     def forward(self, x):
         # define the forward pass through the model
@@ -28,4 +29,4 @@ class ImageRestorationModel(nn.Module):
         out = self.bn3(out)
         out = self.relu3(out)
         out = self.conv4(out)
-        return out
+        return self.relu4(out)

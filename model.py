@@ -13,6 +13,7 @@ from PIL import Image
 import torch.nn.functional as F
 from models.ImageRestorationModel import ImageRestorationModel
 
+# from piqa import SSIM
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--batch_size', type=int, required=True)
@@ -20,6 +21,7 @@ parser.add_argument('--epochs', type=int, default=10)
 args = parser.parse_args()
 batch_size = args.batch_size
 epochs = args.epochs
+
 
 class ImageRestorationDataset(Dataset):
     def __init__(self, degraded_dir, gt_dir, transform=None):
@@ -57,7 +59,7 @@ model = ImageRestorationModel()
 
 # Define the loss function and optimizer
 criterion = nn.MSELoss()
-optimizer = optim.Adam(model.parameters(), lr=0.001)
+optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
 
 # Create a dataset object
 train_dataset = ImageRestorationDataset('train_data/degraded', 'train_data/original', transform=transform)
@@ -68,7 +70,12 @@ dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 def psnr_loss(original, restored, max_val=1.0):
     mse = F.mse_loss(original, restored)
     psnr = 20 * torch.log10(max_val / torch.sqrt(mse))
-    return -psnr  # Return negative PSNR loss since we want to minimize it
+    return -psnr
+
+
+# class SSIMLoss(SSIM):
+#     def forward(self, x, y):
+#         return 1. - super().forward(x, y)
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -105,6 +112,7 @@ for epoch in range(epochs):
 print('Finished Training')
 
 torch.save(model.state_dict(), 'pretrained_models/latest.pt')
+
 
 def test(model, test_loader):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
