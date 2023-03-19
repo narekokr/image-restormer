@@ -34,5 +34,5 @@ class DiffusionDataset(Dataset):
             damaged_img = self.transform(damaged_img)
             gt_img = self.transform(gt_img)
             mask_img = self.transform(mask_img)
-
+        print(damaged_img.size(), gt_img.size(), mask_img.size())
         return damaged_img, gt_img, mask_img
