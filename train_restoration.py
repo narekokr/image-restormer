@@ -12,7 +12,7 @@ from torchvision import transforms
 from PIL import Image
 import torch.nn.functional as F
 
-from dataloaders.ImageRestorationDataset import ImageRestorationDataset
+from image_datasets.ImageRestorationDataset import ImageRestorationDataset
 from models.ImageRestorationModel import ImageRestorationModel
 
 # from piqa import SSIM

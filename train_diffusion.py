@@ -10,8 +10,8 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 import torch.nn.functional as F
 
-from dataloaders.DiffusionDataset import DiffusionDataset
-from dataloaders.ImageRestorationDataset import ImageRestorationDataset
+from image_datasets.DiffusionDataset import DiffusionDataset
+from image_datasets.ImageRestorationDataset import ImageRestorationDataset
 from models.InpaintingModel import InpaintingModel, Autoencoder
 
 parser = argparse.ArgumentParser()
