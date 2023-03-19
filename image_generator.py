@@ -1,19 +1,24 @@
 import os
 import threading
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import numpy
 from PIL import Image, ImageDraw
 import random
 
 # Define the image size and background color
-image_size = (1024, 1024)
-background_color = (230, 230, 230, 0)
-gt_files = os.listdir('raw_images')
-if not os.path.isdir('test'):
-    os.mkdir('test')
+background_color = (255, 255, 255, 0)
+gt_files = os.listdir('train_data/original')
+os.makedirs('test/masks', exist_ok=True)
+os.makedirs('test/damaged', exist_ok=True)
 
 print(len(gt_files))
 # Define a function to generate the image for a given title
 def generate_image(start, end):
     for title in gt_files[start:end]:
+        title, ext = title.split('.')
+        background = Image.open(f'train_data/original/{title}.{ext}').convert("RGBA")
+        image_size = background.size
         # Create a new image and drawing context
         image = Image.new('RGBA', image_size, background_color)
         draw = ImageDraw.Draw(image)
@@ -51,21 +56,19 @@ def generate_image(start, end):
             draw.line(points, fill=scratch_color, width=scratch_width)
 
         # Save the generated texture
-        image.save(f'texture{start}.png')
+        image.save(f'texture{title}.png')
+        image = image.convert('L')
+        array = numpy.uint8(numpy.asarray(image) > 150)
+        plt.imsave(f'test/masks/{title}.{ext}', array, cmap=cm.gray)
 
-        # Open the background and foreground images
-        background = Image.open(f'raw_images/{title}').convert("RGBA")
-        foreground = Image.open(f'texture{start}.png')
-
-        # Resize the foreground image to fit the background image
-        foreground = foreground.resize(background.size)
+        foreground = Image.open(f'texture{title}.png')
 
         # Merge the two images using alpha blending
         merged_image = Image.alpha_composite(background, foreground).convert('RGB')
 
         # Save the merged image
-        merged_image.save(f'test/{title}')
-
+        merged_image.save(f'test/damaged/{title}.{ext}')
+        os.remove(f'texture{title}.png')
 
 # Create a thread for each title
 threads = []
