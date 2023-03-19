@@ -40,7 +40,7 @@ class SSIMLoss(SSIM):
         return 1. - super().forward(x, y)
 
 
-criterion = SSIMLoss()
+criterion = SSIMLoss().cuda() if torch.cuda.is_available() else SSIMLoss()
 
 # Create a dataset object
 train_dataset = DiffusionDataset('train_data/damaged', 'train_data/original', 'train_data/masks', transform=transform)
