@@ -13,6 +13,7 @@ import torch.nn.functional as F
 from image_datasets.DiffusionDataset import DiffusionDataset
 from image_datasets.ImageRestorationDataset import ImageRestorationDataset
 from models.InpaintingModel import InpaintingModel, Autoencoder
+from piqa import SSIM
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--batch_size', type=int, required=True)
@@ -33,6 +34,14 @@ model = Autoencoder()
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
 
+
+class SSIMLoss(SSIM):
+    def forward(self, x, y):
+        return 1. - super().forward(x, y)
+
+
+criterion = SSIMLoss()
+
 # Create a dataset object
 train_dataset = DiffusionDataset('train_data/damaged', 'train_data/original', 'train_data/masks', transform=transform)
 # Create a dataloader object
@@ -42,7 +51,7 @@ dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 def psnr_loss(original, restored, max_val=1.0):
     mse = F.mse_loss(original, restored)
     psnr = 20 * torch.log10(max_val / torch.sqrt(mse))
-    return -psnr
+    return 1 / psnr
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
