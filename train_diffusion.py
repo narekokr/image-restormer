@@ -53,7 +53,7 @@ class SSIMLoss(SSIM):
 # criterion = SSIMLoss().cuda() if torch.cuda.is_available() else SSIMLoss()
 
 # Create a dataset object
-dataset = DiffusionDataset('train_data/damaged', 'train_data/imgs', 'train_data/masks', transform=transform)
+dataset = DiffusionDataset('train_data/imgs', 'train_data/original', 'train_data/masks', transform=transform)
 train_set, val_set = torch.utils.data.random_split(dataset, [0.8, 0.2])
 # Create a dataloader object
 train_dataloader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
