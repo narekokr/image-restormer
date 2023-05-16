@@ -112,7 +112,7 @@ for epoch in range(epochs):
             inputs, original, masks = inputs.to(device), original.to(device), masks.to(device)
 
             outputs = model(inputs)
-            loss = criterion(outputs, masks)
+            loss = criterion(outputs, original)
             losses.append(loss.item())
 
             taken = datetime.timedelta(seconds=(time.time() - start))
