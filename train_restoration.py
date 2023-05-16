@@ -66,7 +66,6 @@ def psnr_loss(original, restored, max_val=1.0):
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-torch.distributed.init_process_group(backend='nccl')
 model = nn.DataParallel(model)
 model.to(device)
 scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
