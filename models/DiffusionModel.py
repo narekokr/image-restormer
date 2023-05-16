@@ -52,7 +52,6 @@ class DiffusionModel(nn.Module):
             for j in range(self.num_blocks):
                 enc_noisy = self.res_blocks[j](enc_noisy)
             dec = self.decoder(enc)
-            print(x.size(), enc_noisy.size(), enc.size())
             x = x + (1.0 / self.num_diffusion_steps) * (dec - x)
         x_diffused = x
 
