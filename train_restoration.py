@@ -41,7 +41,7 @@ model = Autoencoder()
 early_stopper = EarlyStopper(patience=3, min_delta=0.005)
 
 # Define the loss function and optimizer
-criterion = nn.MSELoss(reduction='sum')
+criterion = nn.MSELoss(reduction='mean')
 optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
 
 
