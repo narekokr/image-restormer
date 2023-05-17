@@ -36,10 +36,10 @@ transform = transforms.Compose([
 
 # Create the model object
 model = PartialConvUNet()
-early_stopper = EarlyStopper(patience=3, min_delta=0.005)
+early_stopper = EarlyStopper(patience=3, min_delta=10)
 
 # Define the loss function and optimizer
-criterion = nn.MSELoss()
+criterion = nn.MSELoss(reduction='sum')
 optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
 
 
@@ -56,6 +56,7 @@ train_set, val_set = torch.utils.data.random_split(dataset, [0.8, 0.2])
 # Create a dataloader object
 train_dataloader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=True)
+
 
 def psnr_loss(original, restored, max_val=1.0):
     mse = F.mse_loss(original, restored)
@@ -91,15 +92,18 @@ for epoch in range(epochs):
 
         # forward + backward + optimize
         outputs = model(inputs, masks)
-        # with torch.no_grad():
-        #     plt.imshow(outputs[0].permute(1, 2, 0), cmap=plt.cm.gray)
-        #     plt.show()
         loss = criterion(original, outputs)
         loss.backward()
         optimizer.step()
 
         # print statistics
-        # if i % 100 == 99:  # print every 100 mini-batches
+        # if i % 100 == 5:
+        #     with torch.no_grad():
+        #         plt.subplot(121)
+        #         plt.imshow(original[0].permute(1, 2, 0), cmap=plt.cm.gray)
+        #         plt.subplot(122)
+        #         plt.imshow(outputs[0].permute(1, 2, 0), cmap=plt.cm.gray)
+        #         plt.show()
         taken = datetime.timedelta(seconds=(time.time() - start))
         formatted_time = str(taken).split('.')[0]
         print('[%d, %5d] loss: %.3f, time taken:' % (epoch + 1, i + 1, loss.item()), formatted_time)
