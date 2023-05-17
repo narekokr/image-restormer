@@ -39,7 +39,7 @@ model = PartialConvUNet()
 early_stopper = EarlyStopper(patience=3, min_delta=0.005)
 
 # Define the loss function and optimizer
-criterion = nn.MSELoss(reduction='mean')
+criterion = nn.MSELoss(reduction='sum')
 optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
 
 
@@ -91,9 +91,9 @@ for epoch in range(epochs):
 
         # forward + backward + optimize
         outputs = model(inputs, masks)
-        # with torch.no_grad():
-        #     plt.imshow(outputs[0].permute(1, 2, 0), cmap=plt.cm.gray)
-        #     plt.show()
+        with torch.no_grad():
+            plt.imshow(outputs[0].permute(1, 2, 0), cmap=plt.cm.gray)
+            plt.show()
         loss = criterion(original, outputs)
         loss.backward()
         optimizer.step()
