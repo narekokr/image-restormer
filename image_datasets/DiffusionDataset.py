@@ -26,9 +26,9 @@ class DiffusionDataset(Dataset):
         mask_path = os.path.join(self.mask_dir, self.mask_files[index])
         gt_path = os.path.join(self.gt_dir, self.gt_files[index])
 
-        damaged_img = Image.open(damaged_path).convert('RGB')
-        gt_img = Image.open(gt_path).convert('RGB')
-        mask_img = Image.open(mask_path).convert('RGB')
+        damaged_img = Image.open(damaged_path).convert('L')
+        gt_img = Image.open(gt_path).convert('L')
+        mask_img = Image.open(mask_path).convert('L')
 
         if self.transform:
             damaged_img = self.transform(damaged_img)

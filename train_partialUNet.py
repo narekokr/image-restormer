@@ -12,11 +12,9 @@ from torchvision import transforms
 import torch.nn.functional as F
 
 from image_datasets.DiffusionDataset import DiffusionDataset
-from image_datasets.ImageRestorationDataset import ImageRestorationDataset
-from models.DiffusionModel import DiffusionModel
-from models.InpaintingModel import Autoencoder
 from piqa import SSIM
 
+from models.PartialConvUNet import PartialConvUNet
 from util import EarlyStopper
 
 parser = argparse.ArgumentParser()
@@ -37,7 +35,7 @@ transform = transforms.Compose([
 ])
 
 # Create the model object
-model = Autoencoder()
+model = PartialConvUNet()
 early_stopper = EarlyStopper(patience=3, min_delta=0.005)
 
 # Define the loss function and optimizer
