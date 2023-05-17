@@ -91,9 +91,9 @@ for epoch in range(epochs):
 
         # forward + backward + optimize
         outputs = model(inputs, masks)
-        with torch.no_grad():
-            plt.imshow(outputs[0].permute(1, 2, 0), cmap=plt.cm.gray)
-            plt.show()
+        # with torch.no_grad():
+        #     plt.imshow(outputs[0].permute(1, 2, 0), cmap=plt.cm.gray)
+        #     plt.show()
         loss = criterion(original, outputs)
         loss.backward()
         optimizer.step()
